@@ -1,0 +1,4 @@
+dotnetdetector
+==============
+
+DotNetDetector library.
