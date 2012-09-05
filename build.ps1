@@ -46,8 +46,9 @@ New-Item -ItemType directory -Path $tmpPath | Out-Null
 $projectPath = $PWD | Join-Path -ChildPath DotNetDetector
 $wixFile = $projectPath | Join-Path -ChildPath Product.wxs
 $manifest = $projectPath | Join-Path -ChildPath DotNetDetector.psd1
+$module = $projectPath | Join-Path -ChildPath DotNetDetector.psm1
 $assembly = $projectPath | Join-Path -ChildPath bin\debug\DotNetDetector.dll
-$wixFile, $manifest, $assembly | Copy-Item -Destination $tmpPath
+$wixFile, $manifest, $module, $assembly | Copy-Item -Destination $tmpPath
 
 #
 # Module build.

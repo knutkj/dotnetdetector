@@ -49,6 +49,7 @@
   <ItemGroup>
     <None Include="DotNetDetector.nuspec" />
     <None Include="DotNetDetector.psd1" />
+    <None Include="DotNetDetector.psm1" />
     <None Include="Product.wxs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

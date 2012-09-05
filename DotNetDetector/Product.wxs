@@ -54,6 +54,15 @@
                     KeyPath="yes" />
             </Component>
             <Component
+                Id="ModuleComponent"
+                Guid="E2C247AA-B503-4E08-B176-5663DCE28E15"
+                Win64="yes">
+                <File
+                    Id="ModuleFile"
+                    Source="DotNetDetector.psm1"
+                    KeyPath="yes" />
+            </Component>
+            <Component
                 Id="AssemblyComponent"
                 Guid="14E01FAC-A47B-4986-A4F9-9E170479870D"
                 Win64="yes">
@@ -70,6 +79,7 @@
             Level="1"
             Absent="disallow">
             <ComponentRef Id="ManifestComponent" />
+            <ComponentRef Id="ModuleComponent" />
             <ComponentRef Id="AssemblyComponent" />
         </Feature>
         
