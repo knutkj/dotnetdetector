@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Product
+        Id="*"
+        Name="DotNetDetector PowerShell Module"
+        Language="1033"
+        Version="!(bind.FileVersion.AssemblyFile)"
+        Manufacturer="Knut Kristian Johansen"
+        UpgradeCode="323CF926-ADF9-4CDF-BB9E-58CCD64E31EA">
+
+        <Package
+            Compressed="yes"
+            Manufacturer="Knut Kristian Johansen"
+            Description="Installs the DotNetDetector PowerShell Module"
+            Platform="x64"
+            InstallerVersion="200"/>
+
+        <Media
+            Id="1"
+            Cabinet="media1.cab"
+            EmbedCab="yes" />
+
+        <Directory
+            Id="TARGETDIR"
+            Name="SourceDir">
+            <Directory
+                Id="System64Folder">
+                <Directory
+                    Id="PowerShellDirectory"
+                    Name="WindowsPowerShell">
+                    <Directory
+                        Id="PowerShellV10Directory"
+                        Name="v1.0">
+                        <Directory
+                            Id="PowerShellModulesDirectory"
+                            Name="Modules">
+                            <Directory
+                                Id="DotNetDetectorDirectory"
+                                Name="DotNetDetector" />
+                        </Directory>
+                    </Directory>
+                </Directory>
+            </Directory>
+        </Directory>
+
+        <DirectoryRef Id="DotNetDetectorDirectory">
+            <Component
+                Id="ManifestComponent"
+                Guid="053367B6-511E-4278-8BA8-A1C66A11C21F"
+                Win64="yes">
+                <File
+                    Id="ManifestFile"
+                    Source="DotNetDetector.psd1"
+                    KeyPath="yes" />
+            </Component>
+            <Component
+                Id="AssemblyComponent"
+                Guid="14E01FAC-A47B-4986-A4F9-9E170479870D"
+                Win64="yes">
+                <File
+                    Id="AssemblyFile"
+                    Source="DotNetDetector.dll"
+                    KeyPath="yes" />
+            </Component>
+        </DirectoryRef>
+
+        <Feature
+            Id="ModuleFeature"
+            Title="Module"
+            Level="1"
+            Absent="disallow">
+            <ComponentRef Id="ManifestComponent" />
+            <ComponentRef Id="AssemblyComponent" />
+        </Feature>
+        
+    </Product>
+</Wix>

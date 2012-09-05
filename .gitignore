@@ -5,3 +5,5 @@
 /DotNetDetectorApp/obj
 /DotNetDetector/obj
 /DotNetDetector/bin
+/build
+/tmp
