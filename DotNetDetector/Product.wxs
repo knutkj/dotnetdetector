@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
     <Product
         Id="*"
-        Name="DotNetDetector PowerShell Module"
+        Name="DotNetDetector PowerShell Module (x64)"
         Language="1033"
         Version="!(bind.FileVersion.AssemblyFile)"
         Manufacturer="Knut Kristian Johansen"
@@ -11,7 +11,7 @@
         <Package
             Compressed="yes"
             Manufacturer="Knut Kristian Johansen"
-            Description="Installs the DotNetDetector PowerShell Module"
+            Description="Installs the DotNetDetector PowerShell Module."
             Platform="x64"
             InstallerVersion="200"/>
 
