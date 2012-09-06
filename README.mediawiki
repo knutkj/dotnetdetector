@@ -1,0 +1,3 @@
+= DotNetDetector =
+
+DotNetDetector library detects installed [http://en.wikipedia.org/wiki/.net_framework Microsoft .NET Framework versions]. Visit the '''[https://github.com/knutkj/dotnetdetector/wiki Project Wiki]''' for more information.
