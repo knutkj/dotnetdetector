@@ -40,14 +40,15 @@ namespace DotNetDetector
                 // Detects .NET 3.5 with service packs.
                 new RegistryDetection
                 {
+                    VersionBuilder = new DotNetVersionBuilder
+                    {
+                        Version = new Version("3.5"),
+                        Profiles = DotNetProfiles.ClientFull
+                    },
                     FullProfileRegistryKeyName =
                         @"SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5",
                     FullProfileValueName = "Install",
                     FullProfileValue = 1,
-                    VersionBuilder = new DotNetVersionBuilder
-                    {
-                        Version = new Version("3.5")
-                    },
                     GetServicePacksDelegate = GetServicePacks
                 },
 
@@ -56,7 +57,8 @@ namespace DotNetDetector
                 {
                     VersionBuilder = new DotNetVersionBuilder
                     {
-                        Version = new Version("3.0")
+                        Version = new Version("3.0"),
+                        Profiles = DotNetProfiles.ClientFull
                     },
                     FullProfileRegistryKeyName =
                         @"SOFTWARE\Microsoft\" + 
@@ -71,7 +73,8 @@ namespace DotNetDetector
                 {
                     VersionBuilder = new DotNetVersionBuilder
                     {
-                        Version = new Version("2.0")
+                        Version = new Version("2.0"),
+                        Profiles = DotNetProfiles.ClientFull
                     },
                     FullProfileRegistryKeyName =
                         @"Software\Microsoft\" +
