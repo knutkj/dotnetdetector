@@ -48,6 +48,7 @@
     <Compile Include="DotNetVersionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegistryDetectionTests.cs" />
+    <Compile Include="RegistryDetector.dataTests.cs" />
     <Compile Include="RegistryDetectorTests.cs" />
     <Compile Include="RegistryKeyBaseTests.cs" />
     <Compile Include="RegistryKeyWrapperTests.cs" />

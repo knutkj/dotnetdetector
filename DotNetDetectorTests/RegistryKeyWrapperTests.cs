@@ -17,7 +17,7 @@ namespace DotNetDetectorTests
             // Fixture setup...
 
             // Exercise and verify SUT...
-            new RegistryKeyWrapper(null);
+            new RegistryKeyWrapper(RegistryHive.LocalMachine, null);
 
             // Fixture terdown by GC...
         }
@@ -26,12 +26,14 @@ namespace DotNetDetectorTests
         public void Ctor_KeepsKeyReference()
         {
             // Fixture setup...
+            var hive = RegistryHive.LocalMachine;
             var key = Registry.LocalMachine;
 
             // Exercise SUT...
-            var wrapper = new RegistryKeyWrapper(key);
+            var wrapper = new RegistryKeyWrapper(hive, key);
 
             // Verify SUT...
+            Assert.That(wrapper.Hive, Is.EqualTo(hive));
             Assert.That(wrapper.WrappedKey, Is.SameAs(key));
 
             // Fixture terdown by GC...

@@ -1,4 +1,5 @@
 ﻿using DotNetDetector;
+using Microsoft.Win32;
 using NUnit.Framework;
 using Rhino.Mocks;
 
@@ -8,12 +9,30 @@ namespace DotNetDetectorTests
     public class RegistryKeyBaseTests
     {
         [Test]
+        public void Ctor_StoresHive()
+        {
+            // Fixture setup...
+            var hive = RegistryHive.LocalMachine;
+
+            // Exercise SUT...
+            var key = MockRepository
+                .GeneratePartialMock<RegistryKeyBase>(hive);
+
+            // Verify SUT...
+            Assert.That(key.Hive, Is.EqualTo(hive));
+
+            // Fixture teardown by GC...
+        }
+
+        [Test]
         public void MatchRegistryValue_NotSubKey_Null()
         {
             // Fixture setup...
             const string subKeyName = "subKey";
 
-            var key = MockRepository.GeneratePartialMock<RegistryKeyBase>();
+            var key = MockRepository.GeneratePartialMock<RegistryKeyBase>(
+                RegistryHive.ClassesRoot
+            );
             key.Expect(k => k.OpenSubKey(subKeyName)).Return(null);
 
             // Exercise SUT...
@@ -34,11 +53,15 @@ namespace DotNetDetectorTests
             const string valueName = "valueName";
             const int value = 0;
 
-            var subKey = MockRepository.GeneratePartialMock<RegistryKeyBase>();
+            var subKey = MockRepository.GeneratePartialMock<RegistryKeyBase>(
+                RegistryHive.CurrentConfig
+            );
             subKey.Expect(s => s.GetValue(valueName)).Return(value + 1);
             subKey.Expect(s => s.Dispose());
 
-            var key = MockRepository.GeneratePartialMock<RegistryKeyBase>();
+            var key = MockRepository.GeneratePartialMock<RegistryKeyBase>(
+                RegistryHive.CurrentConfig
+            );
             key.Expect(k => k.OpenSubKey(subKeyName)).Return(subKey);
 
             // Exercise SUT...
@@ -60,11 +83,15 @@ namespace DotNetDetectorTests
             const string valueName = "valueName";
             const int value = 0;
 
-            var subKey = MockRepository.GeneratePartialMock<RegistryKeyBase>();
+            var subKey = MockRepository.GeneratePartialMock<RegistryKeyBase>(
+                RegistryHive.CurrentUser
+            );
             subKey.Expect(s => s.GetValue(valueName)).Return(value);
             subKey.Expect(s => s.Dispose());
 
-            var key = MockRepository.GeneratePartialMock<RegistryKeyBase>();
+            var key = MockRepository.GeneratePartialMock<RegistryKeyBase>(
+                RegistryHive.CurrentConfig
+            );
             key.Expect(k => k.OpenSubKey(subKeyName)).Return(subKey);
 
             // Exercise SUT...

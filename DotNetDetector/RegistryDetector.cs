@@ -8,7 +8,7 @@ namespace DotNetDetector
     /// Represents a Microsoft .NET Framework version detector which
     /// uses the Windows Registry to detect versions. The detector has a list
     /// of default <see cref="RegistryDetection"/> that may be
-    /// overridden. See the <see cref="RegistryDetectionSpecifications"/>
+    /// overridden. See the <see cref="RegistryDetections"/>
     /// property.
     /// </summary>
     public partial class RegistryDetector : IDetector
@@ -40,16 +40,6 @@ namespace DotNetDetector
         internal RegistryKeyBase RootKey { get { return _rootKey; } }
 
         /// <summary>
-        /// Get or set the list of registry detection specifications.
-        /// </summary>
-        public static List<RegistryDetection>
-            RegistryDetectionSpecifications
-        {
-            get { return _registryDetectionSpecs; }
-            set { _registryDetectionSpecs = value; }
-        }
-
-        /// <summary>
         /// Get the detected Microsoft .NET Framework versions.
         /// </summary>
         public IEnumerable<DotNetVersion> Versions
@@ -57,7 +47,7 @@ namespace DotNetDetector
             get
             {
                 var versions = new List<DotNetVersion>();
-                foreach (var spec in RegistryDetectionSpecifications)
+                foreach (var spec in RegistryDetections)
                 {
                     var version = spec.Detect(RootKey);
                     if (version != null)

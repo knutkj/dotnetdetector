@@ -24,7 +24,9 @@ namespace DotNetDetectorTests
         public void Ctor_KeepsRootKeyRef()
         {
             // Fixture setup...
-            var key = MockRepository.GenerateStub<RegistryKeyBase>();
+            var key = MockRepository.GenerateStub<RegistryKeyBase>(
+                RegistryHive.ClassesRoot
+            );
 
             // Exercise SUT...
             var detector = new RegistryDetector(key);

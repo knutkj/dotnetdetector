@@ -5,6 +5,7 @@ using System.Text;
 using NUnit.Framework;
 using DotNetDetector;
 using Rhino.Mocks;
+using Microsoft.Win32;
 
 namespace DotNetDetectorTests
 {
@@ -146,7 +147,9 @@ namespace DotNetDetectorTests
                 .GeneratePartialMock<RegistryDetection>();
             spec.Expect(s => s.Validate());
 
-            var key = MockRepository.GenerateMock<RegistryKeyBase>();
+            var key = MockRepository.GenerateMock<RegistryKeyBase>(
+                RegistryHive.DynData
+            );
 
             // Exercise SUT...
             var res = spec.Detect(key);
@@ -181,7 +184,9 @@ namespace DotNetDetectorTests
             spec.Expect(s => s.FullProfileValue).Return(value);
             spec.Expect(s => s.FullProfileDetected = fullProfileDetected);
 
-            var key = MockRepository.GenerateMock<RegistryKeyBase>();
+            var key = MockRepository.GenerateMock<RegistryKeyBase>(
+                RegistryHive.LocalMachine
+            );
             key
                 .Expect(d => d.MatchRegistryValue(keyName, valueName, value))
                 .Return(fullProfileDetected);
@@ -221,7 +226,9 @@ namespace DotNetDetectorTests
             spec.Expect(s => s.ClientProfileDetected = true);
             spec.Expect(s => s.VersionBuilder).Return(builder);
 
-            var key = MockRepository.GenerateMock<RegistryKeyBase>();
+            var key = MockRepository.GenerateMock<RegistryKeyBase>(
+                RegistryHive.PerformanceData
+            );
             key
                 .Expect(d => d.MatchRegistryValue(keyName, valueName, value))
                 .Return(fullProfileDetected);
@@ -255,7 +262,9 @@ namespace DotNetDetectorTests
             spec.Expect(s => s.ClientProfileValue).Return(value);
             spec.Expect(s => s.ClientProfileDetected = clientProfileDetected);
 
-            var key = MockRepository.GenerateMock<RegistryKeyBase>();
+            var key = MockRepository.GenerateMock<RegistryKeyBase>(
+                RegistryHive.Users
+            );
             key
                 .Expect(d => d.MatchRegistryValue(keyName, valueName, value))
                 .Return(clientProfileDetected);
@@ -286,7 +295,9 @@ namespace DotNetDetectorTests
             builder.Expect(b => b.Profiles = expectedProfiles);
             builder.Expect(b => b.DotNetVersion).Return(version);
 
-            var key = MockRepository.GeneratePartialMock<RegistryKeyBase>();
+            var key = MockRepository.GeneratePartialMock<RegistryKeyBase>(
+                RegistryHive.LocalMachine
+            );
             key
                 .Expect(k => k.MatchRegistryValue(
                     clientRegKeyName,

@@ -23,6 +23,7 @@ namespace DotNetDetectorTests
             var registryDetector = (RegistryDetector)current;
             var key = (RegistryKeyWrapper)registryDetector.RootKey;
             Assert.That(key.WrappedKey, Is.SameAs(Registry.LocalMachine));
+            Assert.That(key.Hive, Is.EqualTo(RegistryHive.LocalMachine));
 
             // Fixture teardown...
             Detector.Current = null;

@@ -21,7 +21,8 @@ namespace DotNetDetector
         /// <exception cref="ArgumentNullException">
         /// If <c>wrappedKey</c> is <c>null</c>.
         /// </exception>
-        public RegistryKeyWrapper(RegistryKey wrappedKey)
+        public RegistryKeyWrapper(RegistryHive hive, RegistryKey wrappedKey)
+            : base(hive)
         {
             if (wrappedKey == null)
             {
@@ -57,7 +58,7 @@ namespace DotNetDetector
             {
                 return null;
             }
-            return new RegistryKeyWrapper(subKey);
+            return new RegistryKeyWrapper(Hive, subKey);
         }
 
         /// <summary>

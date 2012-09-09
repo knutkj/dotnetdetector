@@ -20,7 +20,10 @@ namespace DotNetDetector
             {
                 return _currentDetector ??
                     (_currentDetector = new RegistryDetector(
-                        new RegistryKeyWrapper(Registry.LocalMachine))
+                        new RegistryKeyWrapper(
+                            RegistryHive.LocalMachine,
+                            Registry.LocalMachine
+                        ))
                     );
             }
             set

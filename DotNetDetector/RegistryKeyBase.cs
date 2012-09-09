@@ -1,4 +1,7 @@
 ﻿using System;
+using System.IO;
+using System.Text.RegularExpressions;
+using Microsoft.Win32;
 
 namespace DotNetDetector
 {
@@ -8,6 +11,52 @@ namespace DotNetDetector
     /// </summary>
     public abstract class RegistryKeyBase : IDisposable
     {
+        private readonly RegistryHive _hive;
+
+        internal RegistryKeyBase(RegistryHive hive)
+        {
+            _hive = hive;
+        }
+
+        /// <summary>
+        /// Get the key's registry hive.
+        /// </summary>
+        public RegistryHive Hive
+        {
+            get { return _hive; }
+        }
+
+        /// <summary>
+        /// Get the name of the parent key.
+        /// </summary>
+        /// <param name="hive">
+        /// The registry hive.
+        /// </param>
+        /// <param name="keyName">
+        /// The child key name.
+        /// </param>
+        /// <returns>
+        /// The parent key name.
+        /// </returns>
+        public static string GetParentName(RegistryHive hive, string keyName)
+        {
+            string rootKeyName = null;
+            switch (hive)
+            {
+                case RegistryHive.LocalMachine:
+                    rootKeyName = Registry.LocalMachine.Name;
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+            var parentWithRoot = Path.GetDirectoryName(keyName);
+            return Regex.Replace(
+                parentWithRoot, 
+                "^" + rootKeyName + @"\?", 
+                ""
+            );
+        }
+
         /// <summary>
         /// Get the name of the key.
         /// </summary>
