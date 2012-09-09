@@ -7,127 +7,118 @@ namespace DotNetDetector
 {
     public partial class RegistryDetector
     {
-        /// <summary>
-        /// Get or set the list of registry detection specifications.
-        /// </summary>
-        public static List<RegistryDetectionSpecification>
-            RegistryDetectionSpecifications
-        {
-            get { return _registryDetectionSpecs; }
-            set { _registryDetectionSpecs = value; }
-        }
-
-        private static List<RegistryDetectionSpecification> _registryDetectionSpecs =
-            new List<RegistryDetectionSpecification>
+        private static List<RegistryDetection> _registryDetectionSpecs =
+            new List<RegistryDetection>
             {
-                // Detects .NET 4.0 Full Profile.
-                new RegistryDetectionSpecification
+                // Detects .NET 4.0.
+                new RegistryDetection
                 {
-                    RegistryKey =
+                    VersionBuilder = new DotNetVersionBuilder
+                    {
+                        Version = new Version("4.0"),
+                    },
+                    FullProfileRegistryKeyName =
                         @"SOFTWARE\Microsoft\" +
                         @"NET Framework Setup\NDP\v4\Full",
-                    ValueKey = "Install",
-                    Value = 1,
-                    Version = new DotNetVersion(
-                        new Version("4.0"),
-                        DotNetProfiles.ClientFull
-                    )
-                },
-
-                // Detects .NET 4.0 Client Profile.
-                new RegistryDetectionSpecification
-                {
-                    RegistryKey =
+                    FullProfileValueName = "Install",
+                    FullProfileValue = 1,
+                    ClientProfileRegistryKeyName =
                         @"SOFTWARE\Microsoft\" +
                         @"NET Framework Setup\NDP\v4\Client",
-                    ValueKey = "Install",
-                    Value = 1,
-                    Version = new DotNetVersion(
-                        new Version("4.0"),
-                        DotNetProfiles.Client
-                    ),
-                    IsValidDetectionDelegate =
-                        DotNet4ClientProfileIsValidDetection
+                    ClientProfileValueName = "Install",
+                    ClientProfileValue = 1,
+                    GetProfilesDelegate = Get40Profiles
                 },
 
                 // Detects .NET 3.5 with service packs.
-                new RegistryDetectionSpecification
+                new RegistryDetection
                 {
-                    RegistryKey =
+                    FullProfileRegistryKeyName =
                         @"SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5",
-                    ValueKey = "Install",
-                    Value = 1,
-                    Version = new DotNetVersion(new Version("3.5")),
+                    FullProfileValueName = "Install",
+                    FullProfileValue = 1,
+                    VersionBuilder = new DotNetVersionBuilder
+                    {
+                        Version = new Version("3.5")
+                    },
                     GetServicePacksDelegate = Get35ServicePack
                 },
 
                 // Detects .NET 3.0 with service packs.
-                new RegistryDetectionSpecification
+                new RegistryDetection
                 {
-                    RegistryKey =
+                    VersionBuilder = new DotNetVersionBuilder
+                    {
+                        Version = new Version("3.0")
+                    },
+                    FullProfileRegistryKeyName =
                         @"SOFTWARE\Microsoft\" + 
                         @"NET Framework Setup\NDP\v3.0\Setup",
-                    ValueKey = "InstallSuccess",
-                    Value = 1,
-                    Version = new DotNetVersion(new Version("3.0")),
+                    FullProfileValueName = "InstallSuccess",
+                    FullProfileValue = 1,
                     GetServicePacksDelegate = Get3ServicePack
                 },
 
                 // Detects .NET 2.0 with service packs.
-                new RegistryDetectionSpecification
+                new RegistryDetection
                 {
-                    RegistryKey =
+                    VersionBuilder = new DotNetVersionBuilder
+                    {
+                        Version = new Version("2.0")
+                    },
+                    FullProfileRegistryKeyName =
                         @"Software\Microsoft\" +
                         @"NET Framework Setup\NDP\v2.0.50727",
-                    ValueKey = "Install",
-                    Value = 1,
-                    Version = new DotNetVersion(new Version("2.0")),
+                    FullProfileValueName = "Install",
+                    FullProfileValue = 1,
                     GetServicePacksDelegate = Get2ServicePack
                 }
             };
 
         /// <summary>
-        /// Detects if the .NET 4.0 Full Profil is detected. If so the Client
-        /// Profile detection is not valid since the Full Profile contains the
-        /// Client profile.
+        /// Get the .NET 4.0 profiles.
         /// </summary>
-        private static bool DotNet4ClientProfileIsValidDetection(
-            IEnumerable<DotNetVersion> detectedVersions
+        private static DotNetProfiles Get40Profiles(
+            RegistryKeyBase key,
+            RegistryDetection detection
         )
         {
-            foreach (var version in detectedVersions)
+            if (detection.FullProfileDetected)
             {
-                var full40detected =
-                    version.Version == new Version("4.0") &&
-                    (version.Profiles & DotNetProfiles.Full) ==
-                        DotNetProfiles.Full;
-                if (full40detected)
-                {
-                    return false;
-                }
+                return DotNetProfiles.ClientFull;
             }
-            return true;
+            return DotNetProfiles.Client;
         }
 
         /// <summary>
         /// Get the .NET 3.5 service packs.
         /// </summary>
-        private static IEnumerable<Version> Get35ServicePack(RegistryKey key)
+        private static IEnumerable<Version> Get35ServicePack(
+            RegistryKeyBase key,
+            RegistryDetection detection
+        )
         {
-            return key.GetValue("SP").Equals(1) ?
-                new[] { new Version("1.0") } :
-                new Version[0];
+            return key
+                .OpenSubKey(detection.FullProfileRegistryKeyName)
+                .GetValue("SP").Equals(1) ?
+                    new[] { new Version("1.0") } :
+                    new Version[0];
         }
 
         /// <summary>
         /// Get the .NET 3.0 service packs.
         /// </summary>
-        private static IEnumerable<Version> Get3ServicePack(RegistryKey key)
+        private static IEnumerable<Version> Get3ServicePack(
+            RegistryKeyBase key,
+            RegistryDetection detection
+        )
         {
             var spKeyName = Path
-                .GetDirectoryName(key.Name)
+                .GetDirectoryName(
+                    key.OpenSubKey(detection.FullProfileRegistryKeyName).Name
+                )
                 .Replace(Registry.LocalMachine.Name + @"\", "");
-            var spKey = Registry.LocalMachine.OpenSubKey(spKeyName, false);
+            var spKey = key.OpenSubKey(spKeyName);
             using (spKey)
             {
                 if (spKey == null)
@@ -137,7 +128,7 @@ namespace DotNetDetector
                 var installKeyValue = spKey.GetValue("Install");
                 if (installKeyValue != null && installKeyValue.Equals(1))
                 {
-                    return Get2ServicePack(spKey);
+                    return GetServicePacks(spKey);
                 }
                 return new Version[0];
             }
@@ -146,7 +137,22 @@ namespace DotNetDetector
         /// <summary>
         /// Get the .NET 2.0 service packs.
         /// </summary>
-        private static IEnumerable<Version> Get2ServicePack(RegistryKey key)
+        private static IEnumerable<Version> Get2ServicePack(
+            RegistryKeyBase key,
+            RegistryDetection detection
+        )
+        {
+            return GetServicePacks(
+                key.OpenSubKey(detection.FullProfileRegistryKeyName)
+            );
+        }
+
+        /// <summary>
+        /// Get the .NET 2.0 service packs.
+        /// </summary>
+        private static IEnumerable<Version> GetServicePacks(
+            RegistryKeyBase key
+        )
         {
             var value = key.GetValue("SP");
             if (value.Equals(1))

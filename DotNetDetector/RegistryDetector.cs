@@ -1,17 +1,54 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Win32;
+using System;
 
 namespace DotNetDetector
 {
     /// <summary>
     /// Represents a Microsoft .NET Framework version detector which
     /// uses the Windows Registry to detect versions. The detector has a list
-    /// of default <see cref="RegistryDetectionSpecification"/> that may be
+    /// of default <see cref="RegistryDetection"/> that may be
     /// overridden. See the <see cref="RegistryDetectionSpecifications"/>
     /// property.
     /// </summary>
     public partial class RegistryDetector : IDetector
     {
+        private readonly RegistryKeyBase _rootKey;
+
+        /// <summary>
+        /// Intializes a new instance of the <see cref="RegistryDetector"/>
+        /// with the specified root <see cref="RegistryKeyBase"/>.
+        /// </summary>
+        /// <param name="rootKey">
+        /// The root key.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// If <c>rootKey</c> is <c>null</c>.
+        /// </exception>
+        public RegistryDetector(RegistryKeyBase rootKey)
+        {
+            if (rootKey == null)
+            {
+                throw new ArgumentNullException("rootKey");
+            }
+            _rootKey = rootKey;
+        }
+
+        /// <summary>
+        /// Get the root key.
+        /// </summary>
+        internal RegistryKeyBase RootKey { get { return _rootKey; } }
+
+        /// <summary>
+        /// Get or set the list of registry detection specifications.
+        /// </summary>
+        public static List<RegistryDetection>
+            RegistryDetectionSpecifications
+        {
+            get { return _registryDetectionSpecs; }
+            set { _registryDetectionSpecs = value; }
+        }
+
         /// <summary>
         /// Get the detected Microsoft .NET Framework versions.
         /// </summary>
@@ -19,76 +56,17 @@ namespace DotNetDetector
         {
             get
             {
-                var detections = new List<Detection>();
-                var temporaryVersions = new List<DotNetVersion>();
+                var versions = new List<DotNetVersion>();
                 foreach (var spec in RegistryDetectionSpecifications)
                 {
-                    var version = Detect(spec);
+                    var version = spec.Detect(RootKey);
                     if (version != null)
                     {
-                        detections.Add(new Detection(spec, Detect(spec)));
-                        temporaryVersions.Add(version);
+                        versions.Add(version);
                     }
                 }
-                var finalVersions = new List<DotNetVersion>();
-                foreach (var detection in detections)
-                {
-                    var isValidDetection =
-                        detection.Specification
-                            .IsValidDetectionDelegate == null ||
-                        detection.Specification
-                            .IsValidDetectionDelegate(temporaryVersions);
-                    if (isValidDetection)
-	                {
-                        finalVersions.Add(detection.Version);
-	                }
-                }
-                return finalVersions;
+                return versions;
             }
-        }
-
-        private DotNetVersion Detect(RegistryDetectionSpecification spec)
-        {
-            var key = Registry.LocalMachine.OpenSubKey(
-                spec.RegistryKey,
-                false
-            );
-            using (key)
-            {
-                object value = null;
-                var versionIsInstalled =
-                    key != null &&
-                    (value = key.GetValue(spec.ValueKey)) != null &&
-                    value.Equals(spec.Value);
-                if (versionIsInstalled)
-                {
-                    var version = spec.Version;
-                    if (spec.GetServicePacksDelegate != null)
-                    {
-                        version = new DotNetVersion(
-                            version.Version,
-                            spec.GetServicePacksDelegate(key),
-                            version.Profiles
-                        );
-                    }
-                    return version;
-                }
-                return null;
-            }
-        }
-
-        private class Detection
-        {
-            public Detection(
-                RegistryDetectionSpecification specification,
-                DotNetVersion version
-            )
-            {
-                Specification = specification;
-                Version = version;
-            }
-            public RegistryDetectionSpecification Specification { get; set; }
-            public DotNetVersion Version { get; set; }
         }
     }
 }

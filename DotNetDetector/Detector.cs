@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System;
+using Microsoft.Win32;
 
 namespace DotNetDetector
 {
@@ -17,7 +19,9 @@ namespace DotNetDetector
             get
             {
                 return _currentDetector ??
-                    (_currentDetector = new RegistryDetector());
+                    (_currentDetector = new RegistryDetector(
+                        new RegistryKeyWrapper(Registry.LocalMachine))
+                    );
             }
             set
             {
@@ -31,6 +35,33 @@ namespace DotNetDetector
         public static IEnumerable<DotNetVersion> Versions
         {
             get { return Current.Versions; }
+        }
+
+        /// <summary>
+        /// Get the maximum detected Microsoft .NET Framework version.
+        /// </summary>
+        public static DotNetVersion MaxDotNetVersion
+        {
+            get
+            {
+                if (Versions == null)
+                {
+                    return null;
+                }
+                DotNetVersion maxVersion = null;
+                foreach (var version in Versions)
+                {
+                    if (maxVersion == null)
+                    {
+                        maxVersion = version;
+                    }
+                    else if (version.Version > maxVersion.Version)
+                    {
+                        maxVersion = version;
+                    }
+                }
+                return maxVersion;
+            }
         }
     }
 }

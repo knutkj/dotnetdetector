@@ -44,8 +44,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DetectorTests.cs" />
+    <Compile Include="DotNetVersionBuilderTests.cs" />
     <Compile Include="DotNetVersionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegistryDetectionTests.cs" />
+    <Compile Include="RegistryDetectorTests.cs" />
+    <Compile Include="RegistryKeyBaseTests.cs" />
+    <Compile Include="RegistryKeyWrapperTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DotNetDetector\DotNetDetector.csproj">
