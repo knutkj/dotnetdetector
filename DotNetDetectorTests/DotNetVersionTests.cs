@@ -39,6 +39,20 @@ namespace DotNetDetectorTests
             // Fixture teardown by GC...
         }
 
+        [Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void CtorNoProfileException()
+        {
+            // Fixture setup...
+
+            // Exercise and verify SUT...
+            new DotNetVersion(
+                new Version(),
+                0
+            );
+
+            // Fixture teardown by GC...
+        }
+
         [Test]
         public void CtorStoresArgs()
         {

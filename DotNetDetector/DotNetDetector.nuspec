@@ -13,4 +13,7 @@
         <copyright>Copyright 2012</copyright>
         <tags>DotNetDetector detect version .NET framework</tags>
     </metadata>
+    <files>
+        <file src="readme.txt" target="" />
+    </files>
 </package>

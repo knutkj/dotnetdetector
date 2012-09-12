@@ -44,6 +44,10 @@ namespace DotNetDetector
             {
                 throw new ArgumentNullException("servicePacks");
             }
+            if (!Enum.IsDefined(typeof(DotNetProfiles), profiles))
+            {
+                throw new ArgumentOutOfRangeException("profiles");
+            }
             _version = version;
             _servicePacks = servicePacks;
             _profiles = profiles;

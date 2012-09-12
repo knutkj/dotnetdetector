@@ -38,7 +38,10 @@ namespace DotNetDetectorTests
 
             // Verify SUT...
             Assert.That(builtVersion.Version, Is.SameAs(version));
-            Assert.That(builtVersion.ServicePacks, Is.EqualTo(dotNetVersion.ServicePacks));
+            Assert.That(
+                builtVersion.ServicePacks,
+                Is.EqualTo(dotNetVersion.ServicePacks)
+            );
 
             // Fixture teardown by GC...
         }
@@ -118,6 +121,27 @@ namespace DotNetDetectorTests
             Assert.That(builtVersion.Version, Is.SameAs(version));
             Assert.That(builtVersion.ServicePacks, Is.SameAs(servicePacks));
             Assert.That(builtVersion.Profiles, Is.EqualTo(profiles));
+
+            // Fixture teardown by GC...
+        }
+
+        [Test]
+        public void DotNetVersion_ClientFullIsDefaultProfile()
+        {
+            // Fixture setup...
+            var builder = new DotNetVersionBuilder
+            {
+                Version = new Version("1.0")
+            };
+
+            // Exercise SUT...
+            var builtVersion = builder.DotNetVersion;
+
+            // Verify SUT...
+            Assert.That(
+                builtVersion.Profiles, 
+                Is.EqualTo(DotNetProfiles.ClientFull)
+            );
 
             // Fixture teardown by GC...
         }

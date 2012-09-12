@@ -46,6 +46,7 @@
     <Compile Include="DetectorTests.cs" />
     <Compile Include="DotNetVersionBuilderTests.cs" />
     <Compile Include="DotNetVersionTests.cs" />
+    <Compile Include="DotNetVersionWriterTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegistryDetectionTests.cs" />
     <Compile Include="RegistryDetector.dataTests.cs" />
@@ -54,6 +55,10 @@
     <Compile Include="RegistryKeyWrapperTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DotNetDetectorApp\DotNetDetectorApp.csproj">
+      <Project>{D4357ED5-6AC7-4BE4-8BBF-B2972D7C4F61}</Project>
+      <Name>DotNetDetectorApp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DotNetDetector\DotNetDetector.csproj">
       <Project>{9E860E9F-5898-487C-8025-35EDBBA0B721}</Project>
       <Name>DotNetDetector</Name>

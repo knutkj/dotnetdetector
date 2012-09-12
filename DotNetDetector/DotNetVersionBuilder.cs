@@ -14,6 +14,16 @@ namespace DotNetDetector
     public class DotNetVersionBuilder
     {
         /// <summary>
+        /// Intializes a new instance of <see cref="DotNetVersionBuilder"/>
+        /// with the .NET profile set to
+        /// <see cref="DotNetProfiles.ClientFull"/>.
+        /// </summary>
+        public DotNetVersionBuilder()
+        {
+            Profiles = DotNetProfiles.ClientFull;
+        }
+
+        /// <summary>
         /// Get the built <see cref="DotNetVersion"/>.
         /// </summary>
         public virtual DotNetVersion DotNetVersion
